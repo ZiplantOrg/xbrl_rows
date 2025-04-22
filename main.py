@@ -4,7 +4,7 @@ from lxml import etree
 files = os.listdir('/home/vlad/Документы/xbrl_1_5_gb/test1')
 
 #Параметры
-count_double = 20000 # сколько осей нужно создать в  xbrl(максимум 1гб и 100.000строк на 61 колонку 6.000.000 показателей)
+count_double = 2 # сколько осей нужно создать в  xbrl(максимум 1гб и 100.000строк на 61 колонку 6.000.000 показателей)
 count_block =0 # концепт= уникальный код для контекста в концепте ( по умолчанию 0)
 count_id_item = 0# концепт = уникальный код для каждого итема в концепте ( по умолчанию 0)
 count_name_taxis = 0 # Контекст = taxis_ + (1) индентификатора дайменшина для открытой оси. ( по умолчанию 0)
@@ -21,13 +21,7 @@ for file in files:
         context_block = root.find('.//{http://www.xbrl.org/2003/instance}context')
         count = 0
         purcb_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic}*')
-        if not purcb_elements:
-            # uk_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/uk/dic}*')
-            # srki_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/srki/dic}*')
-            # nfo_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/nfo/dic}*')
-            purcb_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/uk/dic}*')
-
-        # 1. Дублировать каждый элемент 3 раза в концептахdd
+        # 1. Дублировать каждый элемент 3 раза в концептах
         for x in range(count_double):
             count_block += 1
             count +=1
@@ -39,11 +33,11 @@ for file in files:
                 root.append(new_element)
 
             if count > 70000:
-                tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/' + file, pretty_print=True, xml_declaration=True,
+                tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/result/' + file, pretty_print=True, xml_declaration=True,
                            encoding='UTF-8')
                 count = 0
 
-        tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/' + file, pretty_print=True, xml_declaration=True,
+        tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/result/' + file, pretty_print=True, xml_declaration=True,
                    encoding='UTF-8')
         count = 0
 
@@ -53,11 +47,9 @@ for file in files:
             count_name_taxis_and_id_ctx +=1
 
             new_block = etree.fromstring(etree.tostring(context_block))
+            # Найти элемент <dim-int:ID_NomeraInformSoobshheniyaOSdelkeTypedName>
             id_element_dim = new_block.find(
                 './/{http://www.xbrl.org/2003/instance}scenario/{http://xbrl.org/2006/xbrldi}typedMember/{http://www.cbr.ru/xbrl/udr/dim/dim-int}ID_NomeraInformSoobshheniyaOSdelkeTypedName')
-            if not id_element_dim:
-                id_element_dim = new_block.find(
-                    './/{http://www.xbrl.org/2003/instance}scenario/{http://xbrl.org/2006/xbrldi}typedMember/{http://www.cbr.ru/xbrl/udr/dim/dim-int}TipCZennyxBumagAxis')
             # Проверить, что элемент найден
             if id_element_dim is not None:
                 # Изменить значение элемента
