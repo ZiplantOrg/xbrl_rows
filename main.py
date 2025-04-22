@@ -1,3 +1,6 @@
+# идентификатор должен быть создан   "Taxis_1"
+
+
 import os
 from lxml import etree
 # Получить список файлов в директории
@@ -21,6 +24,11 @@ for file in files:
         context_block = root.find('.//{http://www.xbrl.org/2003/instance}context')
         count = 0
         purcb_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic}*')
+        if not purcb_elements:
+            # uk_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/uk/dic}*')
+            # srki_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/srki/dic}*')
+            # nfo_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/nfo/dic}*')
+            purcb_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/uk/dic}*')
         # 1. Дублировать каждый элемент 3 раза в концептах
         for x in range(count_double):
             count_block += 1
@@ -50,13 +58,21 @@ for file in files:
             # Найти элемент <dim-int:ID_NomeraInformSoobshheniyaOSdelkeTypedName>
             id_element_dim = new_block.find(
                 './/{http://www.xbrl.org/2003/instance}scenario/{http://xbrl.org/2006/xbrldi}typedMember/{http://www.cbr.ru/xbrl/udr/dim/dim-int}ID_NomeraInformSoobshheniyaOSdelkeTypedName')
-            # Проверить, что элемент найден
-            if id_element_dim is not None:
-                # Изменить значение элемента
-                id_element_dim.text = 'Taxis_' + str(int(id_element_dim.text.split('_')[1]) + count_name_taxis_and_id_ctx + 1)
-                context_block.set('id', f'ctx_{count_name_taxis_and_id_ctx + 1}')
-            # Добавить новый блок в корень
-            root.append(new_block)
+            if id_element_dim is None:
+                id_element_dim = new_block.find(
+                    './/{http://www.xbrl.org/2003/instance}scenario/{http://xbrl.org/2006/xbrldi}typedMember/{http://www.cbr.ru/xbrl/udr/dim/dim-int}ID_YULTypedName')
+            try:
+                # Проверить, что элемент найден
+                if id_element_dim is not None:
+                    # Изменить значение элемента
+                    id_element_dim.text = 'Taxis_' + str(
+                        int(id_element_dim.text.split('_')[1]) + count_name_taxis_and_id_ctx + 1)
+                    context_block.set('id', f'ctx_{count_name_taxis_and_id_ctx + 1}')
+                # Добавить новый блок в корень
+                root.append(new_block)
+            except Exception as e:
+                print(f"Ошибка: {e}")
+                print("Идентификатор должен быть создан 'Taxis_1'")
 
             if count > 70000:
                 tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/result/' + file, pretty_print=True,
