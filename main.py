@@ -27,7 +27,7 @@ for file in files:
             # nfo_dic_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/nfo/dic}*')
             purcb_elements = root.findall('.//{http://www.cbr.ru/xbrl/nso/uk/dic}*')
 
-        # 1. Дублировать каждый элемент 3 раза в концептах
+        # 1. Дублировать каждый элемент 3 раза в концептахdd
         for x in range(count_double):
             count_block += 1
             count +=1
