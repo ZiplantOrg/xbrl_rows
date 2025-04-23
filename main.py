@@ -41,34 +41,22 @@ for file in files:
         for x in range(count_double):
             count_block += 1
             count += 1
-            print(f'--------------------сохранение_cnc {count}-------------')
-            # сохраняем все дочерние элементы и файл
-            tree.write(f'{path_folder}result/' + file, pretty_print=True, xml_declaration=True, encoding='UTF-8')
-
-            # открываем файл для продолжения записи
-            tree = etree.parse(f'{path_folder}result/' + file)
-            root = tree.getroot()
-
-            # продолжаем запись
-            for purcb_element in (etree.fromstring(etree.tostring(purcb_element)) for purcb_element in elements):
+            for purcb_element in elements:
                 count_id_item += 1
-                count_save += 1
-                new_element = purcb_element
+                new_element = etree.fromstring(etree.tostring(purcb_element))
                 new_element.attrib['contextRef'] = 'ctx_' + str(count_block)
                 new_element.attrib['id'] = 'item_' + str(count_id_item)
                 root.append(new_element)
-                # если больше 100000 строк -- сохранить
-                if count_save == 400000:  # проверяем, является ли счетчик кратным 100
-                    tree.write(f'{path_folder}result/' + file, pretty_print=True, xml_declaration=True,
-                               encoding='UTF-8')
-                    print(f'--------------------сохранение_cnc_100000  {count}-------------')
-                    # root.clear()  # очищаем root после сохранения
-                    count_save = 0
 
-        count_save= 0
-        tree.write(f'{path_folder}/result/' + file, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+            if count > 70000:
+                tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/result/' + file, pretty_print=True,
+                           xml_declaration=True,
+                           encoding='UTF-8')
+                count = 0
+
+        tree.write('/home/vlad/Документы/xbrl_1_5_gb/test1/result/' + file, pretty_print=True, xml_declaration=True,
+                   encoding='UTF-8')
         count = 0
-        elements.clear()  # удаляем первый элемент из списка после его обработки (особождаем ОЗУ)
 
         # 2. Cоздает сктолько контекстов сколько концептов
 
