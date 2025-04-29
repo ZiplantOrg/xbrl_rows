@@ -10,7 +10,7 @@ import re
 
 start = datetime.datetime.now()
 #Параметры
-count_double = 450000 # сколько осей нужно создать в  xbrl(максимум 1гб и 100.000строк на 61 колонку 6.000.000 показателей)
+count_double = 30 # сколько осей нужно создать в  xbrl(максимум 1гб и 100.000строк на 61 колонку 6.000.000 показателей)
 count_block =0 # концепт= уникальный код для контекста в концепте ( по умолчанию 0)
 count_id_item = 0# концепт = уникальный код для каждого итема в концепте ( по умолчанию 0)
 count_name_taxis = 0 # Контекст = taxis_ + (1) индентификатора дайменшина для открытой оси. ( по умолчанию 0)
@@ -44,11 +44,11 @@ for file in files:
             elements = root.findall(value)
             if elements:  # проверяем, является ли elements пустым списком
                 break
+
         # 1. Дублировать каждый концепт столько раз сколько указано в count_double
         for x in range(count_double):
             count_block += 1
             count += 1
-            print(f"concept__________ {count}")
             # обрабоат каждый элемент
             for purcb_element in elements:
                 count_id_item += 1
@@ -71,7 +71,7 @@ for file in files:
                         'utf-8')
                     # Удалите нежелательные ссылки из строки
                     element_str = re.sub(r'xmlns:[^"]+="[^"]+"', '', element_str).strip()
-                    # element_str = element_str.replace(" ", "")
+                    element_str = element_str.replace(" ", "")
                     # Удалите строку <?xml version='1.0' encoding='UTF-8'?>
                     element_str = re.sub(r'<\?xml[^>]*\?>', '', element_str).strip()
                     # запись файла
@@ -85,10 +85,13 @@ for file in files:
             id_element_dim = new_block.find(value)
             if id_element_dim is not None:
                 break
+
         for i in range(count_block):
             count += 1
-            print(f'--------------------сохранение_ctx {count}-------------')
+            print(f'--------------------сохранение_cnc {count}-------------')
             count_name_taxis_and_id_ctx += 1
+
+
             try:
                 # Проверить, что элемент найден
                 if id_element_dim is not None:
@@ -113,7 +116,7 @@ for file in files:
                         'utf-8')
                     # Удалите нежелательные ссылки из строки
                     element_str = re.sub(r'xmlns:[^"]+="[^"]+"', '', element_str).strip()
-                    # element_str = element_str.replace(" ", "")
+                    element_str = element_str.replace(" ", "")
                     # Удалите строку <?xml version='1.0' encoding='UTF-8'?>
                     element_str = re.sub(r'<\?xml[^>]*\?>', '', element_str).strip()
                     # запись файла
@@ -123,28 +126,8 @@ for file in files:
                 print("Идентификатор должен быть создан 'Taxis_1'")
                 print('Cчет_контектов: ', count_name_taxis_and_id_ctx)
 
-        # # 3. обьеденить файлы.
-        # tree = etree.parse(path_folder + file)
-        # root = tree.getroot()
-        #
-        # # Получение необходимых значений
-        # creationdate = root.find('{http://www.xbrl.org/2003/instance}schemaRef').attrib['xlink:href']
-        # unit_BMD = root.find(
-        #     '{http://www.xbrl.org/2003/instance}unit[@id="BMD"]/{http://www.xbrl.org/2003/instance}measure').text
-        # unit_PURE = root.find(
-        #     '{http://www.xbrl.org/2003/instance}unit[@id="PURE"]/{http://www.xbrl.org/2003/instance}measure').text
-        #
-        # file_name = 'itog.txt'
-        # file_path = os.path.join(path_folder_itog, file_name)
-        #
-        # # Создайте директорию, если она не существует
-        # os.makedirs(path_folder_itog, exist_ok=True)
-        #
-        # # Запись значений в текстовый файл
-        # with open(file_path, 'a') as f:
-        #     f.write('creationdate: {}\n'.format(creationdate))
-        #     f.write('unit_BMD: {}\n'.format(unit_BMD))
-        #     f.write('unit_PURE: {}\n'.format(unit_PURE))
+
+
 
 
         end = datetime.datetime.now()
